@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HoraWatch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e2f;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #2a2a40;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background-color: #33334d;
+            border-radius: 10px;
+            padding: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tabs button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin: 5px;
+            flex: 1 1 auto;
+        }
+
+        .tabs button:hover {
+            background: #44445d;
+            transform: translateY(-2px);
+        }
+
+        .tabs button.active {
+            background: #ffcc00;
+            color: #1e1e2f;
+            font-weight: 700;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #33334d;
+            margin-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Hora Info */
+        .hora-info {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .hora-info strong {
+            color: #ffcc00;
+        }
+
+        .hora-details {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .hora-details span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .hora-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .hora-nav button {
+            background: linear-gradient(45deg, #ffcc00, #ff9900);
+            border: none;
+            color: #1e1e2f;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            flex: 1;
+        }
+
+        .hora-nav button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 204, 0, 0.3);
+        }
+
+        /* Daily List */
+        .daily-list {
+            text-align: left;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .daily-list h2 {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .daily-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .daily-list li {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: #44445d;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .daily-list li.current {
+            background-color: #55556d;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .daily-list li:hover {
+            background-color: #55556d;
+        }
+
+        /* Hora Info Tab */
+        .hora-info-tab {
+            text-align: left;
+        }
+
+        .hora-info-tab h2 {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .hora-info-tab ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .hora-info-tab li {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: #44445d;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .hora-info-tab li:hover {
+            background-color: #55556d;
+        }
+
+        /* Date & Time Tab */
+        .date-time-tab input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #44445d;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .date-time-tab button {
+            background: linear-gradient(45deg, #ffcc00, #ff9900);
+            border: none;
+            color: #1e1e2f;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+
+        .date-time-tab button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 204, 0, 0.3);
+        }
+
+        /* Symbol */
+        .symbol {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #fff;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.7); }
+            100% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+        }
+
+        .sun { background-color: #ffcc00; }
+        .venus { background-color: #ff66b2; }
+        .mercury { background-color: #66ff66; }
+        .moon { background-color: #66b2ff; }
+        .saturn { background-color: #6666ff; }
+        .jupiter { background-color: #ff6666; }
+        .mars { background-color: #ff6666; }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tabs button {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            .hora-nav button {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            .symbol {
+                width: 80px;
+                height: 80px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .tabs button {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .hora-nav button {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .symbol {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HoraWatch</h1>
+        <div class="tabs">
+            <button onclick="showTab('current')" class="active">Current Hora</button>
+            <button onclick="showTab('daily')">Entire Day Horas</button>
+            <button onclick="showTab('info')">Hora Info</button>
+            <button onclick="showTab('date-time')">Select Date & Time</button>
+        </div>
+        <div id="current-tab" class="tab-content active">
+            <div class="hora-info">
+                <strong>Current Hora</strong><br>
+                <span id="current-time"></span><br>
+                <span id="hora-range"></span>
+            </div>
+            <div class="hora-details">
+                <div id="hora-symbol" class="symbol"></div>
+                <span id="hora-name"></span>
+                <span id="sanskrit-name"></span>
+                <span id="overlord"></span>
+                <span id="mantra"></span>
+            </div>
+            <div class="hora-nav">
+                <button onclick="showPreviousHora()">Previous</button>
+                <button onclick="showNextHora()">Next</button>
+            </div>
+        </div>
+        <div id="daily-tab" class="tab-content">
+            <div class="daily-list">
+                <h2>Today's Horas</h2>
+                <ul id="horas-list"></ul>
+            </div>
+        </div>
+        <div id="info-tab" class="tab-content">
+            <div class="hora-info-tab">
+                <h2>Hora Info</h2>
+                <ul id="hora-info-list"></ul>
+            </div>
+        </div>
+        <div id="date-time-tab" class="tab-content">
+            <div class="date-time-tab">
+                <input type="date" id="selected-date">
+                <input type="time" id="selected-time">
+                <button onclick="getHoraForDateTime()">Get Hora</button>
+                <div class="hora-info">
+                    <strong>Selected Hora</strong><br>
+                    <span id="selected-hora-time"></span><br>
+                    <span id="selected-hora-range"></span>
+                </div>
+                <div class="hora-details">
+                    <div id="selected-hora-symbol" class="symbol"></div>
+                    <span id="selected-hora-name"></span>
+                    <span id="selected-sanskrit-name"></span>
+                    <span id="selected-overlord"></span>
+                    <span id="selected-mantra"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const horaSequence = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"];
+        const horaData = {
+            Sun: {
+                sanskritName: "Surya",
+                overlord: "Siva",
+                mantra: "Om Suryaya Namaha",
+                symbolClass: "sun",
+                symbolText: "☀️",
+                favorable: "Starting new projects, leadership roles, health-related activities, government work, and authority-related tasks.",
+                unfavorable: "Avoid conflicts, ego-driven decisions, and risky ventures.",
+                color: "Gold",
+                stone: "Ruby",
+                number: "1",
+                metal: "Gold",
+                food: "Wheat",
+                flower: "Sunflower",
+                vehicle: "Chariot",
+                about: "The Sun Hora is ideal for activities requiring confidence, authority, and vitality. It's a good time to start new ventures, especially those related to leadership or health. Avoid arguments and ego clashes during this period."
+            },
+            Venus: {
+                sanskritName: "Shukra",
+                overlord: "Lakshmi",
+                mantra: "Om Shukraya Namaha",
+                symbolClass: "venus",
+                symbolText: "♀️",
+                favorable: "Romantic activities, creative work, art, music, fashion, and luxury-related tasks.",
+                unfavorable: "Avoid overindulgence, laziness, and unnecessary spending.",
+                color: "White",
+                stone: "Diamond",
+                number: "6",
+                metal: "Silver",
+                food: "Fruits",
+                flower: "Rose",
+                vehicle: "Elephant",
+                about: "The Venus Hora is perfect for activities involving love, beauty, and creativity. It's a good time for artistic work, romantic gestures, and luxury-related tasks. Avoid overspending or being overly indulgent."
+            },
+            Mercury: {
+                sanskritName: "Budha",
+                overlord: "Vishnu",
+                mantra: "Om Budhaya Namaha",
+                symbolClass: "mercury",
+                symbolText: "☿",
+                favorable: "Communication, learning, business deals, writing, and intellectual tasks.",
+                unfavorable: "Avoid gossip, overthinking, and hasty decisions.",
+                color: "Green",
+                stone: "Emerald",
+                number: "5",
+                metal: "Bronze",
+                food: "Vegetables",
+                flower: "Marigold",
+                vehicle: "Peacock",
+                about: "The Mercury Hora is ideal for communication, learning, and business-related activities. It's a good time for writing, studying, and making deals. Avoid gossip and overanalyzing situations."
+            },
+            Moon: {
+                sanskritName: "Chandra",
+                overlord: "Parvati",
+                mantra: "Om Chandraya Namaha",
+                symbolClass: "moon",
+                symbolText: "🌙",
+                favorable: "Emotional healing, nurturing, family time, and creative activities.",
+                unfavorable: "Avoid mood swings, laziness, and emotional decisions.",
+                color: "Silver",
+                stone: "Pearl",
+                number: "2",
+                metal: "Silver",
+                food: "Rice",
+                flower: "Jasmine",
+                vehicle: "Antelope",
+                about: "The Moon Hora is perfect for emotional and nurturing activities. It's a good time for family bonding, creative work, and self-care. Avoid making decisions based on emotions or mood swings."
+            },
+            Saturn: {
+                sanskritName: "Shani",
+                overlord: "Yama",
+                mantra: "Om Shanaye Namaha",
+                symbolClass: "saturn",
+                symbolText: "♄",
+                favorable: "Hard work, discipline, long-term planning, and tasks requiring patience.",
+                unfavorable: "Avoid procrastination, negativity, and risky ventures.",
+                color: "Black",
+                stone: "Blue Sapphire",
+                number: "8",
+                metal: "Iron",
+                food: "Sesame",
+                flower: "Blue Lotus",
+                vehicle: "Crow",
+                about: "The Saturn Hora is ideal for disciplined and hard work. It's a good time for long-term planning and tasks requiring patience. Avoid procrastination and negative thinking."
+            },
+            Jupiter: {
+                sanskritName: "Guru",
+                overlord: "Indra",
+                mantra: "Om Gurave Namaha",
+                symbolClass: "jupiter",
+                symbolText: "♃",
+                favorable: "Spiritual activities, education, teaching, charity, and growth-related tasks.",
+                unfavorable: "Avoid arrogance, overindulgence, and unnecessary risks.",
+                color: "Yellow",
+                stone: "Yellow Sapphire",
+                number: "3",
+                metal: "Gold",
+                food: "Turmeric",
+                flower: "Lotus",
+                vehicle: "Horse",
+                about: "The Jupiter Hora is perfect for spiritual and educational activities. It's a good time for teaching, learning, and charitable work. Avoid arrogance and overindulgence."
+            },
+            Mars: {
+                sanskritName: "Mangal",
+                overlord: "Kartikeya",
+                mantra: "Om Mangalaya Namaha",
+                symbolClass: "mars",
+                symbolText: "♂️",
+                favorable: "Physical activities, sports, competition, and tasks requiring courage.",
+                unfavorable: "Avoid anger, aggression, and impulsive decisions.",
+                color: "Red",
+                stone: "Coral",
+                number: "9",
+                metal: "Copper",
+                food: "Red Lentils",
+                flower: "Hibiscus",
+                vehicle: "Ram",
+                about: "The Mars Hora is ideal for physical and competitive activities. It's a good time for sports, exercise, and tasks requiring courage. Avoid anger and impulsive actions."
+            }
+        };
+
+        let currentHoraIndex = 0;
+        let horasList = [];
+
+        // Function to get sunrise and sunset times
+        async function getSunriseSunset(latitude, longitude, date) {
+            const url = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return {
+                sunrise: new Date(data.results.sunrise),
+                sunset: new Date(data.results.sunset)
+            };
+        }
+
+        // Function to get the day's ruling planet
+        function getDayRulingPlanet(date) {
+            const day = date.getDay(); // 0 (Sunday) to 6 (Saturday)
+            const rulingPlanets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
+            return rulingPlanets[day];
+        }
+
+        // Function to generate all Horas for the day
+        function generateHorasList(sunrise, sunset, date) {
+            const dayRulingPlanet = getDayRulingPlanet(date);
+            const startIndex = horaSequence.indexOf(dayRulingPlanet);
+
+            const dayDuration = sunset - sunrise;
+            const horaDuration = dayDuration / 12;
+            const nightDuration = 12 * horaDuration; // 12 Horas for nighttime
+            const horasList = [];
+
+            // Daytime Horas
+            for (let i = 0; i < 12; i++) {
+                const startTime = new Date(sunrise.getTime() + i * horaDuration);
+                const endTime = new Date(startTime.getTime() + horaDuration);
+                const hora = horaSequence[(startIndex + i) % 7];
+                horasList.push({
+                    hora,
+                    startTime,
+                    endTime
+                });
+            }
+
+            // Nighttime Horas
+            for (let i = 0; i < 12; i++) {
+                const startTime = new Date(sunset.getTime() + i * horaDuration);
+                const endTime = new Date(startTime.getTime() + horaDuration);
+                const hora = horaSequence[(startIndex + 12 + i) % 7];
+                horasList.push({
+                    hora,
+                    startTime,
+                    endTime
+                });
+            }
+
+            return horasList;
+        }
+
+        // Function to update the UI with the current Hora
+        function updateUI(index) {
+            const hora = horasList[index];
+            const horaDetails = horaData[hora.hora];
+
+            document.getElementById('current-time').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('hora-range').textContent = `${hora.startTime.toLocaleTimeString()} - ${hora.endTime.toLocaleTimeString()}`;
+            const horaSymbol = document.getElementById('hora-symbol');
+            horaSymbol.className = `symbol ${horaDetails.symbolClass}`;
+            horaSymbol.textContent = horaDetails.symbolText;
+            document.getElementById('hora-name').textContent = hora.hora;
+            document.getElementById('sanskrit-name').textContent = horaDetails.sanskritName;
+            document.getElementById('overlord').textContent = `Overlord: ${horaDetails.overlord}`;
+            document.getElementById('mantra').textContent = `Mantra: ${horaDetails.mantra}`;
+
+            // Update the daily list
+            const horasListElement = document.getElementById('horas-list');
+            horasListElement.innerHTML = horasList.map((h, i) => `
+                <li class="${i === index ? 'current' : ''}">${h.startTime.toLocaleTimeString()} - ${h.endTime.toLocaleTimeString()}: ${h.hora} ${i === index ? '(Current)' : ''}</li>
+            `).join('');
+
+            // Update Hora Info
+            const horaInfoList = document.getElementById('hora-info-list');
+            horaInfoList.innerHTML = `
+                <li><strong>About:</strong> ${horaDetails.about}</li>
+                <li><strong>Favorable:</strong> ${horaDetails.favorable}</li>
+                <li><strong>Unfavorable:</strong> ${horaDetails.unfavorable}</li>
+                <li><strong>Color:</strong> ${horaDetails.color}</li>
+                <li><strong>Stone:</strong> ${horaDetails.stone}</li>
+                <li><strong>Number:</strong> ${horaDetails.number}</li>
+                <li><strong>Metal:</strong> ${horaDetails.metal}</li>
+                <li><strong>Food:</strong> ${horaDetails.food}</li>
+                <li><strong>Flower:</strong> ${horaDetails.flower}</li>
+                <li><strong>Vehicle:</strong> ${horaDetails.vehicle}</li>
+            `;
+        }
+
+        // Function to show the next Hora
+        function showNextHora() {
+            if (currentHoraIndex < horasList.length - 1) {
+                currentHoraIndex++;
+                updateUI(currentHoraIndex);
+            }
+        }
+
+        // Function to show the previous Hora
+        function showPreviousHora() {
+            if (currentHoraIndex > 0) {
+                currentHoraIndex--;
+                updateUI(currentHoraIndex);
+            }
+        }
+
+        // Function to switch tabs
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tabs button').forEach(button => button.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.querySelector(`.tabs button[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Function to get Hora for a specific date and time
+        async function getHoraForDateTime() {
+            const selectedDate = document.getElementById('selected-date').value;
+            const selectedTime = document.getElementById('selected-time').value;
+            if (!selectedDate || !selectedTime) {
+                alert("Please select both date and time.");
+                return;
+            }
+
+            const dateTime = new Date(`${selectedDate}T${selectedTime}`);
+            const latitude = 28.6139; // Default to Delhi, India
+            const longitude = 77.2090;
+
+            try {
+                // Get sunrise and sunset times for the selected date
+                const { sunrise, sunset } = await getSunriseSunset(latitude, longitude, selectedDate);
+
+                // Generate all Horas for the selected date
+                const horasList = generateHorasList(sunrise, sunset, dateTime);
+
+                // Check if the selected time is before sunrise (early morning hours)
+                if (dateTime < sunrise) {
+                    // Use the previous day's sunset and sunrise to calculate nighttime Horas
+                    const previousDate = new Date(dateTime);
+                    previousDate.setDate(previousDate.getDate() - 1);
+                    const previousDateString = previousDate.toISOString().split('T')[0];
+                    const { sunrise: prevSunrise, sunset: prevSunset } = await getSunriseSunset(latitude, longitude, previousDateString);
+
+                    // Generate nighttime Horas for the previous day
+                    const prevHorasList = generateHorasList(prevSunrise, prevSunset, previousDate);
+
+                    // Find the Hora for the selected time (early morning hours)
+                    const selectedHoraIndex = prevHorasList.findIndex(hora => dateTime >= hora.startTime && dateTime < hora.endTime);
+
+                    if (selectedHoraIndex === -1) {
+                        alert("Unable to calculate Hora for the selected date and time.");
+                        return;
+                    }
+
+                    const hora = prevHorasList[selectedHoraIndex];
+                    const horaDetails = horaData[hora.hora];
+
+                    // Update the UI with the selected Hora details
+                    document.getElementById('selected-hora-time').textContent = dateTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    document.getElementById('selected-hora-range').textContent = `${hora.startTime.toLocaleTimeString()} - ${hora.endTime.toLocaleTimeString()}`;
+                    const selectedHoraSymbol = document.getElementById('selected-hora-symbol');
+                    selectedHoraSymbol.className = `symbol ${horaDetails.symbolClass}`;
+                    selectedHoraSymbol.textContent = horaDetails.symbolText;
+                    document.getElementById('selected-hora-name').textContent = hora.hora;
+                    document.getElementById('selected-sanskrit-name').textContent = horaDetails.sanskritName;
+                    document.getElementById('selected-overlord').textContent = `Overlord: ${horaDetails.overlord}`;
+                    document.getElementById('selected-mantra').textContent = `Mantra: ${horaDetails.mantra}`;
+                } else {
+                    // For times after sunrise, use the current day's Horas
+                    const selectedHoraIndex = horasList.findIndex(hora => dateTime >= hora.startTime && dateTime < hora.endTime);
+
+                    if (selectedHoraIndex === -1) {
+                        alert("Unable to calculate Hora for the selected date and time.");
+                        return;
+                    }
+
+                    const hora = horasList[selectedHoraIndex];
+                    const horaDetails = horaData[hora.hora];
+
+                    // Update the UI with the selected Hora details
+                    document.getElementById('selected-hora-time').textContent = dateTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    document.getElementById('selected-hora-range').textContent = `${hora.startTime.toLocaleTimeString()} - ${hora.endTime.toLocaleTimeString()}`;
+                    const selectedHoraSymbol = document.getElementById('selected-hora-symbol');
+                    selectedHoraSymbol.className = `symbol ${horaDetails.symbolClass}`;
+                    selectedHoraSymbol.textContent = horaDetails.symbolText;
+                    document.getElementById('selected-hora-name').textContent = hora.hora;
+                    document.getElementById('selected-sanskrit-name').textContent = horaDetails.sanskritName;
+                    document.getElementById('selected-overlord').textContent = `Overlord: ${horaDetails.overlord}`;
+                    document.getElementById('selected-mantra').textContent = `Mantra: ${horaDetails.mantra}`;
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error: Unable to calculate Hora.");
+            }
+        }
+
+        // Main function to initialize the app
+        async function init() {
+            try {
+                // Get user's location
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                });
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // Get sunrise and sunset times
+                const { sunrise, sunset } = await getSunriseSunset(latitude, longitude, new Date().toISOString().split('T')[0]);
+
+                // Generate all Horas for the day
+                horasList = generateHorasList(sunrise, sunset, new Date());
+
+                // Find the current Hora
+                const now = new Date();
+                currentHoraIndex = horasList.findIndex(hora => now >= hora.startTime && now < hora.endTime);
+
+                // Update the UI
+                updateUI(currentHoraIndex);
+            } catch (error) {
+                console.error(error);
+                alert("Error: Unable to calculate Hora.");
+            }
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
