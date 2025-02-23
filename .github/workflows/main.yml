@@ -21,6 +21,12 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova
 
+      - name: Install Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+          echo "y" | sudo sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+
       - name: Create Cordova project
         run: |
           cordova create my-app
